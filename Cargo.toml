@@ -1,0 +1,16 @@
+[package]
+name = "totpkeep"
+version = "0.1.0"
+authors = ["Slava Zipp <zipp.pnl@gmail.com>"]
+
+[dependencies]
+clap = "~2.26"
+rust-crypto = "0.2.36"
+oath = "0.10.2"
+base32 = "0.3.1"
+rand = "0.3.17"
+
+[profile.release]
+lto = true
+panic = 'abort'
+
