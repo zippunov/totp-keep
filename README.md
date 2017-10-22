@@ -28,8 +28,6 @@ $ totpkeep -p mypass list
 
 ## Usage
 
-`totpkeep` stored all its data in the encrypted file. 
-
 ### getting help
 Run `totpkeep --help` for usage help.
 ```bash
