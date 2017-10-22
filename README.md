@@ -29,7 +29,7 @@ $ totpkeep -p mypass list
 ## Usage
 
 ### getting help
-Run `totpkeep --help` for usage help.
+Run `totpkeep --help` for general usage help.
 ```bash
 $ ./target/release/totpkeep --help
 totpkeep 
@@ -52,6 +52,26 @@ SUBCOMMANDS:
     recrypt    Remove service record
     remove     Remove service record
 ```
+
+You can get further help for each of sub-commands with `totp <subcommand> -h`
+
+```bash
+$totpkeep add -h
+totpkeep-add 
+Add service record
+
+USAGE:
+    totpkeep -p <password> add <name> <secret>
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+ARGS:
+    <name>      Service name. For example "site1 MyUserName 2FA"
+    <secret>    TOTP secret
+```
+
 ### Add TOTP record
 
 ```bash
