@@ -1,4 +1,4 @@
-#TOTP keeper
+# TOTP keeper
 
 Small CLI utility to store bunch of TOTP registration records and display current
 TOTP token for each record. 
@@ -21,12 +21,12 @@ $ totpkeep -p mypass list
 - You can choose to run programm with default storage file `~/.config/totpkeep.tkp` or specify
   custom file with parameter `-f <path to custom file>`
 
-##Installation
+## Installation
 - Install Rust programming language. This project was built with Rust version `1.21.0`
 - Run `cargo build --release`
 - Resulting executable `totpkeep` will be created in `target/relese` directory
 
-##Usage
+## Usage
 
 `totpkeep` stored all its data in the encrypted file. 
 
@@ -92,7 +92,7 @@ $ totpkeep -p mypassword recrypt mynewpassword
 $
 ```
 
-##Storage file
+## Storage file
 
 - File is encrypted with combination of Chacha20 and Poly1305 algorithms.
 - Encryption key is derived from password with bcrypt_pbkdf.
