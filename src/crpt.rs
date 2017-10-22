@@ -21,8 +21,10 @@ pub fn encrypt(body: &[u8], password: &str) -> Vec<u8> {
     let mut gen = OsRng::new().expect("Failed to get OS random generator");
     gen.fill_bytes(&mut result[..16]);
     let mut key: Vec<u8> = build_key(password, &result[..16]);
-    let mut chacha = ChaCha20::new(&key, &result[..8]);
-    chacha.process(body, &mut result[16..(len + 16)]);
+    if len > 0 {
+        let mut chacha = ChaCha20::new(&key, &result[..8]);
+        chacha.process(body, &mut result[16..(len + 16)]);
+    }
     let mut poly1305 = Poly1305::new(&key);
     poly1305.input(&result[16..(len + 16)]);
     let mac = poly1305.result();
@@ -32,6 +34,9 @@ pub fn encrypt(body: &[u8], password: &str) -> Vec<u8> {
 
 pub fn decrypt(encrypted: &Vec<u8>, password: &str) -> Result<Vec<u8>, Error> {
     let len = encrypted.len() - 32;
+    if len < 0 {
+        return return Err(Error::CorruptedFileContent);
+    }
     let salt = &encrypted[..16];
     let body = &encrypted[16..(len + 16)];
     let tag = &encrypted[(len + 16)..];
@@ -42,8 +47,10 @@ pub fn decrypt(encrypted: &Vec<u8>, password: &str) -> Result<Vec<u8>, Error> {
     if !poly1305.result().eq(&mac) {
         return Err(Error::WrongPassword);
     }
-    let mut chacha = ChaCha20::new(&key, &encrypted[..8]);
     let mut decrypted_body: Vec<u8> = vec![0u8; len];
-    chacha.process(&body, &mut decrypted_body[..]);
+    if len > 0 {
+        let mut chacha = ChaCha20::new(&key, &encrypted[..8]);
+        chacha.process(&body, &mut decrypted_body[..]);
+    }
     Ok(decrypted_body)
 }

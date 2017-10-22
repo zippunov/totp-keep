@@ -4,9 +4,10 @@
 pub enum Error {
     NoHomeDirectory,
     FileNotFound,
-    WrongServiceRecordData,
     FileError,
+    CorruptedFileContent,
     WrongPassword,
+    WrongServiceRecordData,
     UnknownCommand
 }
 
@@ -20,9 +21,10 @@ impl fmt::Display for Error {
         match *self {
             Error::NoHomeDirectory => f.write_str("NoHomeDirectory"),
             Error::FileNotFound => f.write_str("FileNotFound"),
-            Error::WrongServiceRecordData => f.write_str("WrongServiceRecord"),
             Error::FileError => f.write_str("FileEror"),
+            Error::CorruptedFileContent => f.write_str("CorruptedFileContent"),
             Error::WrongPassword => f.write_str("WrongPassword"),
+            Error::WrongServiceRecordData => f.write_str("WrongServiceRecord"),
             Error::UnknownCommand => f.write_str("UnknownCommand"),
         }
     }
@@ -33,9 +35,10 @@ impl StdError for Error {
         match *self {
             Error::NoHomeDirectory => "Unable to get home directory",
             Error::FileNotFound => "File not found",
-            Error::WrongServiceRecordData => "Unable to parse TOTP secret",
             Error::FileError => "File operation error",
+            Error::CorruptedFileContent => "File is corrupted",
             Error::WrongPassword => "Wrong password",
+            Error::WrongServiceRecordData => "Unable to parse TOTP secret",
             Error::UnknownCommand => "Unknown Command",
         }
     }

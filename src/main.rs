@@ -75,7 +75,6 @@ fn main() {
         ("add", Some(m)) => {
             let name = m.value_of("name").unwrap();
             let code = m.value_of("secret").unwrap();
-            println!("Got command add with {} {}", name, code);
             totpkeep::add_service(name, code, password, file)
         },
         ("remove", Some(m)) => {

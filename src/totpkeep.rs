@@ -63,6 +63,7 @@ fn totp(secret: &[u8], time: u64) -> u64 {
 }
 
 fn display_registry(registry: &[ServiceRecord]) {
+    // TODO extract into differend module
     use std::iter::repeat;
     use std::io::{stdout, Write};
 
@@ -186,9 +187,10 @@ pub fn add_service(name: &str, code: &str, password: &str, file: Option<&str>) -
 pub fn remove_service(index: u16, password: &str, file: Option<&str>) -> Result<(), Error> {
     let mut registry = load_registry(file, password, true)?;
     // TODO range check
-    registry.remove((index + 1) as usize);
+    registry.remove((index - 1) as usize);
     save_registry(file, password, &registry)?;
     display_registry(&registry);
+    // TODO take into account empty registry
     Ok(())
 }
 
