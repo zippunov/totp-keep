@@ -15,21 +15,21 @@ use errors::{Error};
 fn main() {
     let matches = App::new("totpkeep")
         .arg(Arg::with_name("password")
-            .help("password for the service records file")
+            .help("password for the TOTP records file")
             .short("p")
             .takes_value(true)
             .required(true)
         )
         .arg(Arg::with_name("file")
-            .help("service records file. Default is ~/.config/totpkeep.tkp")
+            .help("TOTP records file. Default is ~/.config/totpkeep.tkp")
             .takes_value(true)
             .short("f")
         )
         .subcommand(
             SubCommand::with_name("add")
-                .about("Add service record")
+                .about("Add record")
                 .arg(Arg::with_name("name")
-                    .help("Service name. For example \"site1 MyUserName 2FA\"")
+                    .help("Name. For example \"site1 MyUserName 2FA\"")
                     .index(1)
                     .takes_value(true)
                     .required(true)
@@ -43,10 +43,10 @@ fn main() {
         )
         .subcommand(
             SubCommand::with_name("remove")
-                .about("Remove service record")
+                .about("Remove record")
                 // or "myapp help"
                 .arg(Arg::with_name("index")
-                    .help("index of the record")
+                    .help("index of the record. See index in the \"totpkeep list\" output")
                     .index(1)
                     .takes_value(true)
                     .required(true)
@@ -54,11 +54,11 @@ fn main() {
         )
         .subcommand(
             SubCommand::with_name("list")
-                .about("List TOTP codes for all service records")
+                .about("List codes for all records")
         )
         .subcommand(
             SubCommand::with_name("recrypt")
-                .about("Remove service record")
+                .about("Re-encrypt file")
                 // or "myapp help"
                 .arg(Arg::with_name("newpass")
                     .help("new password")

@@ -42,15 +42,15 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-    -f <file>            service records file. Default is ~/.config/totpkeep.tkp
-    -p <password>        password for the service records file
+    -f <file>            TOTP records file. Default is ~/.config/totpkeep.tkp
+    -p <password>        password for the TOTP records file
 
 SUBCOMMANDS:
-    add        Add service record
+    add        Add record
     help       Prints this message or the help of the given subcommand(s)
-    list       List TOTP codes for all service records
-    recrypt    Remove service record
-    remove     Remove service record
+    list       List codes for all records
+    recrypt    Re-encrypt file
+    remove     Remove record
 ```
 
 You can get further help for each of sub-commands with `totp <subcommand> -h`
@@ -58,7 +58,7 @@ You can get further help for each of sub-commands with `totp <subcommand> -h`
 ```bash
 $totpkeep add -h
 totpkeep-add 
-Add service record
+Add record
 
 USAGE:
     totpkeep -p <password> add <name> <secret>
@@ -68,7 +68,7 @@ FLAGS:
     -V, --version    Prints version information
 
 ARGS:
-    <name>      Service name. For example "site1 MyUserName 2FA"
+    <name>      Name. For example "site1 MyUserName 2FA"
     <secret>    TOTP secret
 ```
 
