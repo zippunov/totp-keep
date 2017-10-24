@@ -1,7 +1,16 @@
 # TOTP keeper
 
 Small CLI utility to store bunch of TOTP registration records and display current
-TOTP token for each record. 
+TOTP token for each record.
+
+## Thanks
+
+It is my pleasure to thank [Dmitry Chestnykh (dchest)](https://github.com/dchest)
+for his generous support in making crypto for this application right way. Seriously, do not
+invent crypto yourself. Ask professional such as  [Dmitry](https://github.com/dchest) and you
+are about to get a lot of surprising discoveries as I was.
+
+## General
 ```bash
 $ totpkeep -p mypass list
 ╔══════════════════════╤══════════╤══════════╤══════════╗
@@ -20,6 +29,7 @@ $ totpkeep -p mypass list
   parameter for each call.
 - You can choose to run programm with default storage file `~/.config/totpkeep.tkp` or specify
   custom file with parameter `-f <path to custom file>`
+- If file does not exist it will be created on adding first record
 
 ## Installation
 - Install Rust programming language. This project was built with Rust version `1.21.0`
@@ -111,10 +121,13 @@ $
 ```
 
 ## Storage file
-
-- File is encrypted with combination of Chacha20 and Poly1305 algorithms.
-- Encryption key is derived from password with bcrypt_pbkdf.
-- First 16 bytes of the file are crypto salt bytes
-- Last 16 bytes of the file are Poly1305 MAC
-- Bytes in between are serialised and encrypted TOTP records
-
+- File is encrypted with combination of Chacha20 and Poly1305 algorithms. 
+- Encryption key is derived from password with bcrypt_pbkdf with length 64 bytes then split into two 32 bytes keys for ChaCha20 and Poly1305.
+### File structure
+```bash
+- 16 bytes of key salt
+- 4 bytes of bcrypt_pbkdf cost parameter
+- 8 bytes of ChaCha20 nonce
+- variable number bytes for encrypted TOTP records
+- 16 bytes of Poly1305 tag
+```
