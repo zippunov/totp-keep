@@ -1,6 +1,7 @@
-extern crate crypto;
-extern crate clap;
 extern crate base32;
+extern crate byteorder;
+extern crate clap;
+extern crate crypto;
 extern crate oath;
 extern crate rand;
 
