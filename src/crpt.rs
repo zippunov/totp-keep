@@ -50,25 +50,37 @@ impl RegistryFile {
     }
 
     pub fn decrypt(&self, encrypted: &Vec<u8>, password: &str) -> Result<Vec<u8>, Error> {
-        let key_salt = &encrypted[self.key_salt()];
+        let mut key = self.extract_key(&encrypted[..], password);
+        self.validate_mac(&key[..], &encrypted[..])?;
+        Ok(self.decrypt_body(&key[..], &encrypted[..]))
+    }
+
+    fn extract_key(&self, encrypted: &[u8], password: &str) -> Vec<u8> {
+        let key_salt = &encrypted[self.key_salt()] as &[u8];
         let bcrypt_pbkdf_cost = BigEndian::read_u32(&encrypted[self.bcrypt_pbkdf()]);
-        let mut key: Vec<u8> = build_key(password, key_salt, bcrypt_pbkdf_cost);
-        let chacha20_key_range = ..32;
-        let poly1305_key_range = 32..64;
-        let body = &encrypted[self.body()];
-        let tag = &encrypted[self.tag()];
+        build_key(password, key_salt, bcrypt_pbkdf_cost)
+    }
+
+    fn validate_mac(&self, key: &[u8], encrypted: &[u8]) -> Result<(), Error> {
+        let body = &encrypted[self.body()] as &[u8];
+        let tag = &encrypted[self.tag()] as &[u8];
         let mac = MacResult::new(&tag);
-        let mut poly1305 = Poly1305::new(&key[poly1305_key_range]);
+        let mut poly1305 = Poly1305::new(&key[32..64]);
         poly1305.input(&body);
         if !poly1305.result().eq(&mac) {
             return Err(Error::WrongPassword);
         }
+        Ok(())
+    }
+
+    fn decrypt_body(&self, key: &[u8], encrypted: &[u8]) -> Vec<u8> {
         let mut decrypted_body: Vec<u8> = vec![0u8; self.decrypted_len];
         if self.decrypted_len > 0 {
-            let mut chacha = ChaCha20::new(&key[chacha20_key_range], &encrypted[self.chacha_nonce()]);
+            let body = &encrypted[self.body()] as &[u8];
+            let mut chacha = ChaCha20::new(&key[..32], &encrypted[self.chacha_nonce()]);
             chacha.process(&body, &mut decrypted_body[..]);
         }
-        Ok(decrypted_body)
+        decrypted_body
     }
 
     fn fill_header(&self, content: &mut [u8]) {
