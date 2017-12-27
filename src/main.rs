@@ -9,6 +9,7 @@ mod crpt;
 mod errors;
 mod totpkeep;
 mod utils;
+mod table;
 
 use clap::{App, Arg, SubCommand};
 use errors::{Error};
@@ -25,6 +26,11 @@ fn main() {
             .help("TOTP records file. Default is ~/.config/totpkeep.tkp")
             .takes_value(true)
             .short("f")
+        )
+        .arg(Arg::with_name("ascii")
+            .help("display table with ASCII symbols instead of Unicode")
+            .takes_value(false)
+            .short("a")
         )
         .subcommand(
             SubCommand::with_name("add")
@@ -72,17 +78,21 @@ fn main() {
 
     let password = matches.value_of("password").unwrap();
     let file = matches.value_of("file");
+    let symbols: &table::TableSymbols = match matches.is_present("ascii") {
+        true => &table::AsciiTableSymbols{},
+        false => &table::UnicodeTableSymbols{}
+    };
     let rslt = match matches.subcommand() {
         ("add", Some(m)) => {
             let name = m.value_of("name").unwrap();
             let code = m.value_of("secret").unwrap();
-            totpkeep::add_service(name, code, password, file)
+            totpkeep::add_service(name, code, password, file, symbols)
         },
         ("remove", Some(m)) => {
             let index = m.value_of("index").unwrap().parse::<u16>().unwrap();
-            totpkeep::remove_service(index, password, file)
+            totpkeep::remove_service(index, password, file, symbols)
         },
-        ("list", Some(m)) => totpkeep::list_services(password, file),
+        ("list", Some(m)) => totpkeep::list_services(password, file, symbols),
         ("recrypt", Some(m)) => Ok(()),
         (&_, _) => Err(Error::UnknownCommand)
     };
